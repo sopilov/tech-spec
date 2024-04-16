@@ -1,0 +1,5 @@
+transformers
+streamlit
+
+fugashi
+unidic_lite
