@@ -4,7 +4,6 @@ import time
 
 
 def send(user_request):
-    token = os.environ["YA_N_TOKEN"]
     cookie = os.environ["YA_N_COOKIE"]
     url_send = os.environ["YA_N_URL_SEND"]
     url_get = os.environ["YA_N_URL_GET"]
@@ -14,8 +13,7 @@ def send(user_request):
 
     # Данные для отправки в теле POST-запроса
     payload = {
-        "UserRequest": "Найди технические характеристики и описание " + user_request,
-        "Token": token
+        "UserRequest": "Найди технические характеристики и описание " + user_request
     }
     # Отправка POST запроса
     response = requests.post(url_send, json=payload, headers=headers, cookies=cookies)
@@ -25,7 +23,8 @@ def send(user_request):
         try:
             # Получение и возврат значения поля "ResponseMessageId" из JSON ответа
             response_data = response.json()
-            response_message_id = response_data.get("ResponseMessageId")
+            print(response_data["ResponseStatus"]["LimitsInfo"]["CommentByLang"]["ru"])
+            response_message_id = response_data["ResponseMessageId"]
         except ValueError:
             print("Ошибка: Не удалось декодировать JSON.")
             return None
@@ -38,19 +37,25 @@ def send(user_request):
         "ResponseMessageId": response_message_id
     }
 
-    # Пауза перед выполнением запроса, чтобы сервер успел найти данные
-    time.sleep(5)
-
     # Отправка POST-запроса
-    response = requests.post(url_get, headers=headers, cookies=cookies, json=data)
+    complete = False
+    while not complete:
+        response = requests.post(url_get, headers=headers, cookies=cookies, json=data)
+        response_data = response.json()
+        complete = response_data["IsCompleteResults"]
 
     # Проверка статуса ответа
     if response.status_code == 200:
         try:
             # Получение и возврат значения поля "TargetMarkdownText" из JSON ответа
             response_data = response.json()
-            target_markdown_text = response_data.get("TargetMarkdownText")
-            return "Данные из сети интернет: \n" + target_markdown_text
+            target_markdown_text = response_data["TargetMarkdownText"]
+            links = ""
+            for element in response_data["LinksData"]:
+                links = links + "\n\n" + str(element["Num"]) + ". " + element["FullUrl"]
+
+            return ("Данные из сети интернет: \n\n" + target_markdown_text
+                    + "\n\nИспользуемые источники:" + links)
         except ValueError:
             print("Ошибка: Не удалось декодировать JSON.")
             return None
