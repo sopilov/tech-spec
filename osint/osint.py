@@ -1,6 +1,5 @@
 import os
 import requests
-import time
 
 
 def send(user_request):
@@ -21,7 +20,7 @@ def send(user_request):
     # Проверка статуса ответа
     if response.status_code == 200:
         try:
-            # Получение и возврат значения поля "ResponseMessageId" из JSON ответа
+            # Получение значения поля "ResponseMessageId" из JSON ответа
             response_data = response.json()
             print(response_data["ResponseStatus"]["LimitsInfo"]["CommentByLang"]["ru"])
             response_message_id = response_data["ResponseMessageId"]
@@ -32,12 +31,11 @@ def send(user_request):
         print(f"Ошибка: Сервер вернул статус {response.status_code}")
         return None
 
-    # Данные для отправки в теле POST-запроса
     data = {
         "ResponseMessageId": response_message_id
     }
 
-    # Отправка POST-запроса
+    # Отправка POST-запроса пока не придет флаг True
     complete = False
     while not complete:
         response = requests.post(url_get, headers=headers, cookies=cookies, json=data)
@@ -52,8 +50,7 @@ def send(user_request):
             target_markdown_text = response_data["TargetMarkdownText"]
             links = ""
             for element in response_data["LinksData"]:
-                links = links + "\n\n" + str(element["Num"]) + ". " + element["FullUrl"]
-
+                links += "\n\n" + str(element["Num"]) + ". " + element["FullUrl"]
             return ("Данные из сети интернет: \n\n" + target_markdown_text
                     + "\n\nИспользуемые источники:" + links)
         except ValueError:
