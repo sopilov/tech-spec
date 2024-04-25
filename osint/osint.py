@@ -51,8 +51,7 @@ def send(user_request):
             links = ""
             for element in response_data["LinksData"]:
                 links += "\n\n" + str(element["Num"]) + ". " + element["FullUrl"]
-            return ("Данные из сети интернет: \n\n" + target_markdown_text
-                    + "\n\nИспользуемые источники:" + links)
+            return target_markdown_text + "\n\nИспользуемые источники:" + links
         except ValueError:
             print("Ошибка: Не удалось декодировать JSON.")
             return None
