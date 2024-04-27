@@ -15,8 +15,8 @@ def completion(task, text):
         "modelUri": "gpt://" + x_folder_id + "/yandexgpt/latest",
         "completionOptions": {
             "stream": False,
-            "temperature": 0.3,
-            "maxTokens": "1000"
+            "temperature": 0.1,
+            "maxTokens": "3000"
         },
         "messages": [
             {
