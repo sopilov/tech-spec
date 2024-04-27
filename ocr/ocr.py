@@ -3,7 +3,7 @@ import json
 import requests
 
 
-def recognize_pdf(pdf_base64):
+def recognize(file_base64, file_type):
     x_folder_id = os.environ["x_folder_id"]
     jwt = os.environ["JWT"]
 
@@ -14,10 +14,10 @@ def recognize_pdf(pdf_base64):
 
     # Данные для отправки в теле POST-запроса
     payload = {
-        "mimeType": "application/pdf",
+        "mimeType": file_type,
         "languageCodes": ["*"],
         "model": "page",
-        "content": pdf_base64
+        "content": file_base64
     }
 
     # Отправка POST запроса
