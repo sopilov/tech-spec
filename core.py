@@ -76,7 +76,7 @@ def fix_json_quotes(text):
 
     # Теперь исправляем значения, если они не заключены в кавычки
     # Ищем последовательности после двоеточия, которые не начинаются на кавычку или цифру (простые строки без кавычек)
-    pattern_values = r'(?<=:)\s*(?=\S)([\w\s-]+)'
+    pattern_values = r'(?<=:)\s*(?=\S)([\w\s\-\.]+)'
     fixed_values = re.sub(pattern_values, r'"\1"', fixed_keys)
     return fixed_values
 
